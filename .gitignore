@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.pytest_cache/
+.venv/
+venv/
+.env
+
+# Editor
+.vscode/
+.idea/
+
+# Dataset & bobot model (terlalu besar untuk GitHub)
+data/
+datasets/
+checkpoints/
+*.pth
+*.pt
+*.tar.gz
+*.zip
+
+# OS
+.DS_Store
+Thumbs.db
