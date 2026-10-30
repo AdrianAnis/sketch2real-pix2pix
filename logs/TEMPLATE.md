@@ -6,7 +6,8 @@
 - **Tanggal Sesi:** DD/MM/YYYY
 - **Anggota:** [Nama]
 - **Target Modul:** [contoh: Blok encoder U-Net / Debugging shape mismatch]
-- **Tautan Sesi Chat:** [share link]
+- **LLM:** [contoh: Claude (claude.ai) / ChatGPT / Gemini]
+- **Tautan Sesi Chat:** [share link, atau nama file ekspor PDF/Markdown]
 
 ## Kronologi Prompt & Respons
 
