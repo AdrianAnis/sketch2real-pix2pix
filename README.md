@@ -64,3 +64,21 @@ Aktifkan GPU di Kaggle Notebook, lalu:
 2. Setiap sesi LLM diawali dengan isi `logs/SYSTEM_PROMPT.md`.
 3. Setiap sesi dicatat di `logs/<nama>/` memakai `logs/TEMPLATE.md`, lengkap dengan share link.
 4. Commit memakai akun GitHub masing-masing.
+
+## Pola Menulis Prompt
+
+Setiap prompt sebaiknya memuat 4 unsur:
+
+1. **Konteks**: siapa kamu dan file apa yang dikerjakan
+2. **Target spesifik**: satu komponen kecil, bukan satu file utuh
+3. **Minta penjelasan**: kenapa pendekatan itu dipilih (bahan presentasi)
+4. **Minta bukti jalan**: tes shape atau contoh output
+
+Contoh:
+> "Aku [nama], mengerjakan src/[file].py. Sekarang buat [komponen kecil].
+> Jelaskan dulu [konsep yang belum dipahami], lalu tulis kodenya
+> beserta tes sederhana untuk memastikan [shape/output] benar."
+
+Saat eror:
+> "Kode [komponen] menghasilkan eror berikut: [tempel eror utuh].
+> Jelaskan penyebabnya, lalu beri perbaikan minimal."
