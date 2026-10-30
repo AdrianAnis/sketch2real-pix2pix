@@ -23,3 +23,6 @@ checkpoints/
 # OS
 .DS_Store
 Thumbs.db
+
+# Panduan proyek dari dosen (tidak di-push)
+/*.pdf

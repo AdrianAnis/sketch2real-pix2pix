@@ -3,3 +3,4 @@ torchvision
 matplotlib
 tqdm
 scikit-image
+pytest

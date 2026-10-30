@@ -7,7 +7,7 @@ Model **Pix2Pix (Conditional GAN)** untuk mengubah sketsa (edges) menjadi gambar
 
 | Nama | Peran | File |
 |---|---|---|
-| Rian (Adrian Anis Pratama) | Ketua — Prompt Engineer & LLM Navigator, Lead Documentarian | `src/model.py`, `logs/` |
+| Rian (Adrian Anis Pratama) | Ketua — Prompt Engineer & LLM Navigator, Lead Documentarian & Error Handler | `src/model.py`, `logs/` |
 | Naura | Data Pipeline & Preprocessing Engineer | `src/data.py` |
 | Meyra | Training Loop & Hyperparameter Tuning Engineer | `src/train.py` |
 
@@ -41,10 +41,12 @@ sketch2real-pix2pix/
 │   ├── data.py          # Dataset & DataLoader
 │   ├── model.py         # Generator & Discriminator
 │   └── train.py         # Training loop, loss, metrik, checkpoint
-├── tests/               # Tes shape model
+├── tests/               # Tes per modul (test_data.py, test_model.py, test_train.py)
 ├── .gitignore
+├── DECISIONS.md         # Catatan keputusan desain & alasannya
 ├── README.md
-└── requirements.txt
+├── requirements.txt
+└── WORKFLOW.md          # Timeline, checklist per fase, siklus kerja
 ```
 
 ## Menjalankan di Kaggle
@@ -55,6 +57,7 @@ Aktifkan GPU di Kaggle Notebook, lalu:
 !git clone https://github.com/<username>/sketch2real-pix2pix.git
 %cd sketch2real-pix2pix
 !pip install -q -r requirements.txt
+!python -m pytest tests/
 !python -m src.train
 ```
 

@@ -4,7 +4,7 @@
 - **Anggota:** Rian (Adrian Anis Pratama)
 - **Target Modul:** Perencanaan arsitektur, pembagian tugas, dan struktur repo
 - **LLM:** Claude (claude.ai)
-- **Tautan Sesi Chat:** [00-perencanaan-arsitektur.pdf] 
+- **Tautan Sesi Chat:** https://claude.ai/share/3eda9f1b-3076-4258-a5dc-9aa7be161366 
 
 > Catatan: prompt pada log ini disunting untuk keterbacaan tanpa mengubah isi. Teks asli dapat dilihat pada tautan sesi.
 
@@ -43,6 +43,18 @@
   - Log dipisah per anggota (`logs/adrian`, `logs/naura`, `logs/meyra`) dengan indeks kronologis di `logs/README.md`
   - Struktur pembanding dari kelompok lain dievaluasi; yang diadopsi hanya `tests/` (dan `configs/` nanti), karena folder lain tumpang tindih atau seharusnya tidak di-push (`.venv`, `.pytest_cache`, `.vscode`)
   - Dibuat `logs/SYSTEM_PROMPT.md` sebagai system prompt bersama agar gaya kode ketiga anggota konsisten
+
+### 4. Tahap Penyusunan Alur Kerja Tim
+
+- **Prompt Kelompok:**
+  > "Bagaimana anggota lain menyusun prompt mereka sendiri? Apakah perlu template?"
+  > "Jelaskan alur kerja proyek ini agar bisa saya sampaikan ke anggota kelompok. Apakah perlu dokumen perencanaan, dan di mana sebaiknya disimpan?"
+- **Alasan Khusus:** Ketiga anggota bekerja paralel di modul berbeda, sehingga dibutuhkan pola prompt dan alur kerja yang seragam agar hasil kode dan log konsisten tanpa menyeragamkan isi prompt.
+- **Hasil:**
+  - Ditambahkan bagian "Pola Menulis Prompt" di `README.md` (konteks, target spesifik, minta penjelasan, minta bukti jalan), bukan prompt jadi, agar variasi prompt tiap anggota tetap terjaga
+  - Ditambahkan kolom **LLM** di `logs/TEMPLATE.md`; lampiran riwayat chat berupa share link atau ekspor PDF/Markdown sesuai panduan
+  - Dibuat `WORKFLOW.md` berisi 4 fase (pengerjaan modul paralel → integrasi di Kaggle → training & tuning → demo & laporan), siklus kerja per sesi, aturan Git, dan checklist detail per modul
+  - Ditegaskan bahwa output sistem berupa gambar RGB 256×256, dan model hanya mampu menghasilkan objek sepatu sesuai dataset edges2shoes (dicatat sebagai batasan)
 
 ## Catatan
 
