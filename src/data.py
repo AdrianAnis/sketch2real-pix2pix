@@ -5,7 +5,7 @@ import numpy as np
 import torch
 from pathlib import Path
 from typing import List, Tuple, Union, Optional, Literal, Sequence
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, DataLoader
 
 IMG_EXTS = {".jpg", ".jpeg", ".png"}
 
@@ -170,3 +170,42 @@ class Edges2ShoesDataset(Dataset):
         sketch_t = pil_to_tensor(sketch)                    # [3, 256, 256]
         photo_t = pil_to_tensor(photo)                      # [3, 256, 256]
         return sketch_t, photo_t
+
+# src/data.py (tambahkan di bawah Edges2ShoesDataset)
+
+def build_dataloaders(
+    data_root: str,
+    batch_size: int,
+    num_workers: int = 2,
+) -> Tuple[DataLoader, DataLoader]:
+    """Buat DataLoader train dan val dari lokasi dataset.
+
+    Setiap batch: (sketch, photo), masing-masing [B, 3, 256, 256],
+    float32, rentang [-1, 1].
+    Return: (train_loader, val_loader)
+    """
+    assert batch_size > 0, "batch_size harus positif"
+
+    train_paths, val_paths = select_edges2shoes_subset(data_root)
+    train_ds = Edges2ShoesDataset(train_paths, mode="train")
+    val_ds = Edges2ShoesDataset(val_paths, mode="val")
+
+    pin = torch.cuda.is_available()
+
+    train_loader = DataLoader(
+        train_ds,
+        batch_size=batch_size,
+        shuffle=True,          # acak urutan tiap epoch
+        num_workers=num_workers,
+        pin_memory=pin,
+        drop_last=True,        # buang batch terakhir yang tidak penuh
+    )
+    val_loader = DataLoader(
+        val_ds,
+        batch_size=batch_size,
+        shuffle=False,         # urutan tetap, hasil mudah dibandingkan
+        num_workers=num_workers,
+        pin_memory=pin,
+        drop_last=False,       # semua data val ikut terukur
+    )
+    return train_loader, val_loader
