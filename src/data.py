@@ -20,7 +20,9 @@ from typing import List, Tuple, Union, Optional, Literal, Sequence
 from torch.utils.data import Dataset, DataLoader
 
 IMG_EXTS = {".jpg", ".jpeg", ".png"}
-
+IMG_SIZE = 256  
+LOAD_SIZE: int = 286   
+CROP_SIZE: int = 256   
 
 def select_edges2shoes_subset(
     data_root: Union[str, Path],
@@ -67,8 +69,6 @@ def select_edges2shoes_subset(
 
     return train_paths, val_all
 
-IMG_SIZE = 256  # sisi tiap gambar (sketch dan photo), sesuai kontrak
-
 def load_pair(path: Union[str, Path]) -> Tuple[Image.Image, Image.Image]:
     """Baca satu file edges2shoes (512x256) lalu potong jadi (sketch, photo).
 
@@ -102,17 +102,12 @@ def pil_to_tensor(img: Image.Image) -> torch.Tensor:
     assert x.shape == (3, IMG_SIZE, IMG_SIZE), f"Shape tak terduga: {tuple(x.shape)}"
     return x
 
-
 def tensor_to_image(t: torch.Tensor) -> np.ndarray:
     """Tensor [3, H, W] di [-1, 1] -> array [H, W, 3] float32 di [0, 1] (siap imshow)."""
     assert t.ndim == 3 and t.shape[0] == 3, f"Butuh [3, H, W], dapat {tuple(t.shape)}"
     x = (t.detach().cpu().to(torch.float32) + 1.0) / 2.0  # [-1, 1] -> [0, 1]
     x = x.clamp(0.0, 1.0)
     return x.permute(1, 2, 0).numpy()                     # [H, W, 3]
-
-LOAD_SIZE: int = 286   # ukuran sementara sebelum crop
-CROP_SIZE: int = 256   # ukuran akhir, sesuai kontrak [B, 3, 256, 256]
-
 
 def random_jitter_pair(
     sketch: Image.Image,
