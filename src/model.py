@@ -159,3 +159,15 @@ class Discriminator(nn.Module):
         assert sketch.shape == photo.shape, f"shape beda: {sketch.shape} vs {photo.shape}"
         x = torch.cat([sketch, photo], dim=1)  # [B, 6, 256, 256]
         return self.head(self.features(x))
+
+def init_weights(m: nn.Module) -> None:
+    """DCGAN-style init: conv ~ N(0, 0.02); BatchNorm gamma ~ N(1, 0.02); semua bias = 0."""
+    if isinstance(m, (nn.Conv2d, nn.ConvTranspose2d)):
+        nn.init.normal_(m.weight, mean=0.0, std=0.02)
+        if m.bias is not None:
+            nn.init.zeros_(m.bias)
+    elif isinstance(m, nn.BatchNorm2d):
+        if m.weight is not None:
+            nn.init.normal_(m.weight, mean=1.0, std=0.02)
+        if m.bias is not None:
+            nn.init.zeros_(m.bias)
