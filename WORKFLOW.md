@@ -23,10 +23,10 @@
 - [x] Download edges2shoes, ambil subset ±10.000 gambar
 - [x] Baca satu gambar, potong jadi sketsa (kiri) dan foto (kanan)
 - [x] Resize ke 256×256, normalisasi ke [-1, 1]
-- [ ] Augmentasi (random jitter + flip horizontal)
-- [ ] Class Dataset + DataLoader
-- [ ] Tampilkan satu pasangan (sketsa & foto) untuk cek visual
-- [ ] `tests/test_data.py`: tes shape `[B, 3, 256, 256]`, dtype `float32`, rentang `[-1, 1]`
+- [x] Augmentasi (random jitter + flip horizontal)
+- [x] Class Dataset + DataLoader
+- [x] Tampilkan satu pasangan (sketsa & foto) untuk cek visual
+- [x] `tests/test_data.py`: tes shape `[B, 3, 256, 256]`, dtype `float32`, rentang `[-1, 1]`
 
 **`src/model.py` — Rian**
 

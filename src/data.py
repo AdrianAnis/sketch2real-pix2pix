@@ -141,12 +141,6 @@ def random_jitter_pair(
     assert sketch.size == photo.size == (crop_size, crop_size)
     return sketch, photo
 
-# Rencana pemakaian nanti di Dataset:
-#   train: load_pair -> random_jitter_pair -> pil_to_tensor
-#   val  : load_pair -> pil_to_tensor (tanpa augmentasi)
-
-# src/data.py (tambahkan di bawah tensor_to_image / random_jitter_pair)
-
 class Edges2ShoesDataset(Dataset):
     """Dataset pasangan (sketch, photo) edges2shoes.
 
@@ -171,8 +165,6 @@ class Edges2ShoesDataset(Dataset):
         sketch_t = pil_to_tensor(sketch)                    # [3, 256, 256]
         photo_t = pil_to_tensor(photo)                      # [3, 256, 256]
         return sketch_t, photo_t
-
-# src/data.py (tambahkan di bawah Edges2ShoesDataset)
 
 def build_dataloaders(
     data_root: str,
