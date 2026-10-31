@@ -2,7 +2,7 @@
 
 - **Tanggal Sesi:** 31/10/2026
 - **Anggota:** Naura
-- **Target Modul:** src/data.py — Pemilihan subset dataset edges2shoes dan pemotongan sketsa/foto
+- **Target Modul:** src/data.py — Load dataset edges2shoes: pemilihan subset, pemotongan sketsa/foto, resize dan normalisasi [-1, 1]
 - **LLM:** Claude (claude.ai)
 - **Tautan Sesi Chat:** https://claude.ai/share/18627179-f7da-419f-8b02-64f05fe5039a
 
@@ -49,6 +49,34 @@
   - Fungsi `show_pairs` untuk menampilkan beberapa pasangan berdampingan, dan cek angka `color_spread` (rata-rata atas 200 gambar) untuk memastikan sketsa lebih "abu-abu" daripada foto.
   - Pertanyaan lanjutan: kode tampilan ditaruh di cell baru di bawah cell subset, dan AI mengingatkan tiga syarat (`train_paths` harus ada, `load_pair` harus ada di `src/data.py`, dan modul lama tersimpan di memori).
 - **Hasil di Kaggle:** Panel menampilkan `sketch (256, 256)` di kiri dan `photo (256, 256)` di kanan. Sketsa dan foto tidak tertukar, dan bentuk sepatunya cocok. Setelah ditanya "apakah hasilnya sudah berhasil?", AI menilai hasilnya benar untuk bagian yang terlihat dan menyarankan mengecek pasangan ketiga.
+
+#### 1c. Konversi gambar ke tensor ternormalisasi [-1, 1]
+
+- **Prompt Kelompok:**
+  > Pemotongan sketsa dan foto sudah berhasil. Hasilnya tampil benar, masing-masing 256x256 dan tidak tertukar. Item berikutnya: mengubah gambar PIL hasil load_pair menjadi tensor [3, 256, 256] dengan dtype float32 dan rentang [-1, 1].
+  >
+  > Jelaskan dulu:
+  >
+  > 1. Kenapa rentangnya [-1, 1] dan bukan [0, 1].
+  > 2. Kenapa tidak memakai normalisasi mean/std ImageNet.
+  > 3. Bagaimana mengubah tensor kembali ke [0, 1] supaya bisa ditampilkan dengan matplotlib.
+  >
+  > Lalu tulis kodenya sebagai dua fungsi kecil: satu untuk PIL ke tensor ternormalisasi, satu untuk kebalikannya (tensor ke gambar yang bisa ditampilkan). Jangan sertakan augmentasi dulu. Terakhir, beri cara mengecek shape, dtype, nilai min dan max, serta bukti bahwa mengubah bolak-balik (tensor lalu kembali) menghasilkan gambar yang sama dengan aslinya.
+- **Alasan Khusus:** Model hanya menerima tensor, dan rentang nilainya harus sama dengan keluaran Generator agar sesuai kontrak data. Fungsi kebalikan diminta karena akan dipakai untuk menampilkan dan menyimpan sampel hasil training.
+- **Output Model:**
+  - Alasan `[-1, 1]`: sesuai keluaran Tanh pada Generator sehingga foto asli dan foto palsu berada di ruang nilai yang sama (kalau tidak, Discriminator bisa membedakan dari rentang nilainya saja), L1 loss hanya bermakna jika kedua gambar dinormalisasi sama, dan input yang berpusat di nol memberi gradien awal lebih seimbang.
+  - Alasan tidak memakai mean/std ImageNet: statistik itu hanya dibutuhkan jaringan pretrained, sedangkan model kami dilatih dari nol; distribusi gambar sepatu berlatar putih berbeda dari ImageNet; dan inversnya lebih rumit. Pemetaan `x / 127.5 - 1` setara dengan `Normalize(mean=0.5, std=0.5)`.
+  - Kebalikan ke `[0, 1]`: `(x + 1) / 2`, lalu `clamp(0, 1)`, `permute(1, 2, 0)` agar channel di sumbu terakhir, dan `.detach().cpu().numpy()`.
+  - Fungsi `pil_to_tensor(img)` (PIL RGB menjadi tensor `[3, 256, 256]` float32 di `[-1, 1]`) dan `tensor_to_image(t)` (tensor menjadi array `[H, W, 3]` di `[0, 1]`, hanya untuk satu gambar).
+  - Cara cek: shape, dtype, dan min/max pada gambar nyata; ujung pemetaan (hitam tepat -1.0, putih tepat +1.0); serta round-trip gambar ke tensor lalu kembali memakai `round()` agar tidak gagal akibat pembulatan float.
+  - Pertanyaan lanjutan: urutan push dan pull. AI menjelaskan kalau file diedit di laptop maka push dulu, lalu `git pull` di Kaggle, lalu reload modul; kalau diedit langsung di Kaggle perubahannya akan hilang saat sesi berakhir.
+- **Hasil di Kaggle:**
+  ```
+  sketch: shape=(3, 256, 256) dtype=torch.float32 min=-1.000 max=1.000
+  photo: shape=(3, 256, 256) dtype=torch.float32 min=-1.000 max=1.000
+  Round-trip identik pada 100 pasang (200 gambar)
+  ```
+  Setelah ditanya apakah komponen ini selesai, AI menyatakan sudah selesai.
 
 ### 2. Tahap Penanganan Eror / Debugging
 
@@ -122,3 +150,5 @@
   - **Pelajaran:** salinan repo di Kaggle tidak otomatis ikut berubah. Setiap ada kode baru: push dari laptop, `git pull` di notebook, lalu reload modul atau restart session.
 
 ## Catatan
+
+Langkah 1 (pemilihan subset), Langkah 2 (pemotongan sketsa dan foto), dan Langkah 3 (resize dan normalisasi ke [-1, 1]) selesai dan lolos verifikasi. Sesi berikutnya (`02-augmentasi-dataloader`) mengerjakan Langkah 4 sampai 8.

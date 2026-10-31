@@ -4,7 +4,7 @@ import random
 import numpy as np
 import torch
 from pathlib import Path
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union, Optional
 
 IMG_EXTS = {".jpg", ".jpeg", ".png"}
 
@@ -99,3 +99,46 @@ def tensor_to_image(t: torch.Tensor) -> np.ndarray:
     x = (t.detach().cpu().to(torch.float32) + 1.0) / 2.0  # [-1, 1] -> [0, 1]
     x = x.clamp(0.0, 1.0)
     return x.permute(1, 2, 0).numpy()                     # [H, W, 3]
+
+LOAD_SIZE: int = 286   # ukuran sementara sebelum crop
+CROP_SIZE: int = 256   # ukuran akhir, sesuai kontrak [B, 3, 256, 256]
+
+
+def random_jitter_pair(
+    sketch: Image.Image,
+    photo: Image.Image,
+    rng: Optional[random.Random] = None,
+    load_size: int = LOAD_SIZE,
+    crop_size: int = CROP_SIZE,
+    flip_prob: float = 0.5,
+) -> Tuple[Image.Image, Image.Image]:
+    """Random jitter + flip horizontal dengan parameter yang SAMA untuk
+    sketsa dan foto. Input/output: PIL RGB 256x256."""
+    rng = rng if rng is not None else random.Random()
+    assert sketch.size == photo.size == (crop_size, crop_size), \
+        f"Ukuran harus {crop_size}x{crop_size}, dapat {sketch.size} dan {photo.size}"
+
+    # 1) Resize 256 -> 286 (kedua gambar, interpolasi sama)
+    resample = Image.Resampling.BICUBIC
+    sketch = sketch.resize((load_size, load_size), resample)
+    photo = photo.resize((load_size, load_size), resample)
+
+    # 2) Parameter crop diambil SEKALI, dipakai untuk keduanya
+    max_offset = load_size - crop_size                 # 30
+    left = rng.randint(0, max_offset)                  # inklusif: 0..30
+    top = rng.randint(0, max_offset)
+    box = (left, top, left + crop_size, top + crop_size)
+    sketch = sketch.crop(box)                          # 256x256
+    photo = photo.crop(box)
+
+    # 3) Keputusan flip diambil SEKALI, dipakai untuk keduanya
+    if rng.random() < flip_prob:
+        sketch = sketch.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
+        photo = photo.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
+
+    assert sketch.size == photo.size == (crop_size, crop_size)
+    return sketch, photo
+
+# Rencana pemakaian nanti di Dataset:
+#   train: load_pair -> random_jitter_pair -> pil_to_tensor
+#   val  : load_pair -> pil_to_tensor (tanpa augmentasi)

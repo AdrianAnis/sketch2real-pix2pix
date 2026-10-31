@@ -22,7 +22,7 @@
 
 - [x] Download edges2shoes, ambil subset ±10.000 gambar
 - [x] Baca satu gambar, potong jadi sketsa (kiri) dan foto (kanan)
-- [ ] Resize ke 256×256, normalisasi ke [-1, 1]
+- [x] Resize ke 256×256, normalisasi ke [-1, 1]
 - [ ] Augmentasi (random jitter + flip horizontal)
 - [ ] Class Dataset + DataLoader
 - [ ] Tampilkan satu pasangan (sketsa & foto) untuk cek visual
