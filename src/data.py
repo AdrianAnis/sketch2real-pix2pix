@@ -4,7 +4,8 @@ import random
 import numpy as np
 import torch
 from pathlib import Path
-from typing import List, Tuple, Union, Optional
+from typing import List, Tuple, Union, Optional, Literal, Sequence
+from torch.utils.data import Dataset
 
 IMG_EXTS = {".jpg", ".jpeg", ".png"}
 
@@ -142,3 +143,30 @@ def random_jitter_pair(
 # Rencana pemakaian nanti di Dataset:
 #   train: load_pair -> random_jitter_pair -> pil_to_tensor
 #   val  : load_pair -> pil_to_tensor (tanpa augmentasi)
+
+# src/data.py (tambahkan di bawah tensor_to_image / random_jitter_pair)
+
+class Edges2ShoesDataset(Dataset):
+    """Dataset pasangan (sketch, photo) edges2shoes.
+
+    mode="train": load_pair -> random_jitter_pair -> pil_to_tensor
+    mode="val"  : load_pair -> pil_to_tensor (tanpa augmentasi)
+    """
+
+    def __init__(self, paths: Sequence[str], mode: Literal["train", "val"]) -> None:
+        if mode not in ("train", "val"):
+            raise ValueError(f'mode harus "train" atau "val", dapat {mode!r}')
+        assert len(paths) > 0, "Daftar path kosong"
+        self.paths: List[str] = list(paths)
+        self.mode: str = mode
+
+    def __len__(self) -> int:
+        return len(self.paths)
+
+    def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor]:
+        sketch, photo = load_pair(self.paths[idx])          # PIL RGB 256x256
+        if self.mode == "train":
+            sketch, photo = random_jitter_pair(sketch, photo)  # PIL RGB 256x256
+        sketch_t = pil_to_tensor(sketch)                    # [3, 256, 256]
+        photo_t = pil_to_tensor(photo)                      # [3, 256, 256]
+        return sketch_t, photo_t
