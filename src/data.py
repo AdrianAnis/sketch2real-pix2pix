@@ -1,4 +1,15 @@
+"""
+data.py — Dataset & DataLoader edges2shoes
+Penanggung jawab: Naura
+
+Kontrak output: pasangan (sketch, photo)
+  shape [B, 3, 256, 256], float32, rentang [-1, 1]
+
+Kode dibangun lewat vibe coding; catat setiap sesi LLM di logs/naura/.
+"""
+
 from __future__ import annotations
+from PIL import Image 
 
 import random
 import numpy as np
@@ -56,10 +67,7 @@ def select_edges2shoes_subset(
 
     return train_paths, val_all
 
-from PIL import Image
-
 IMG_SIZE = 256  # sisi tiap gambar (sketch dan photo), sesuai kontrak
-
 
 def load_pair(path: Union[str, Path]) -> Tuple[Image.Image, Image.Image]:
     """Baca satu file edges2shoes (512x256) lalu potong jadi (sketch, photo).
