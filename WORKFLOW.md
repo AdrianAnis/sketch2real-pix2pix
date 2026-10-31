@@ -33,7 +33,7 @@
 - [x] Blok downsampling (encoder)
 - [x] Blok upsampling (decoder) + dropout
 - [x] Generator U-Net utuh dengan skip connection
-- [ ] Discriminator PatchGAN 70×70
+- [x] Discriminator PatchGAN 70×70
 - [ ] Inisialisasi bobot (normal, std 0.02)
 - [ ] `tests/test_model.py`: tes shape Generator & Discriminator
 

@@ -122,3 +122,40 @@ class Generator(nn.Module):
             x = torch.cat([x, skip], dim=1)  # [B, C_up + C_skip, H, W]
 
         return self.out(x)  # [B, 3, 256, 256]
+    
+class _PatchBlock(nn.Module):
+    """Conv 4x4 (padding 1) -> [BatchNorm] -> LeakyReLU(0.2)."""
+
+    def __init__(self, in_ch: int, out_ch: int, stride: int, use_norm: bool = True) -> None:
+        super().__init__()
+        layers: list[nn.Module] = [
+            # bias tidak diperlukan jika diikuti norm
+            nn.Conv2d(in_ch, out_ch, kernel_size=4, stride=stride, padding=1, bias=not use_norm)
+        ]
+        if use_norm:
+            layers.append(nn.BatchNorm2d(out_ch))
+        layers.append(nn.LeakyReLU(0.2, inplace=True))
+        self.block = nn.Sequential(*layers)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        return self.block(x)
+
+
+class Discriminator(nn.Module):
+    """PatchGAN 70x70. D(sketch, photo) -> patch logits [B, 1, 30, 30] untuk input 256x256."""
+
+    def __init__(self, in_channels: int = 6, base_ch: int = 64) -> None:
+        super().__init__()
+        self.features = nn.Sequential(
+            _PatchBlock(in_channels, base_ch, stride=2, use_norm=False),  # [B, 64, 128, 128]
+            _PatchBlock(base_ch, base_ch * 2, stride=2),                  # [B, 128, 64, 64]
+            _PatchBlock(base_ch * 2, base_ch * 4, stride=2),              # [B, 256, 32, 32]
+            _PatchBlock(base_ch * 4, base_ch * 8, stride=1),              # [B, 512, 31, 31]
+        )
+        # Lapisan terakhir: tanpa norm, tanpa aktivasi (output = logits mentah)
+        self.head = nn.Conv2d(base_ch * 8, 1, kernel_size=4, stride=1, padding=1)  # [B, 1, 30, 30]
+
+    def forward(self, sketch: torch.Tensor, photo: torch.Tensor) -> torch.Tensor:
+        assert sketch.shape == photo.shape, f"shape beda: {sketch.shape} vs {photo.shape}"
+        x = torch.cat([sketch, photo], dim=1)  # [B, 6, 256, 256]
+        return self.head(self.features(x))
