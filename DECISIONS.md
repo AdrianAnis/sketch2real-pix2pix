@@ -15,3 +15,4 @@ Tambahkan baris baru setiap ada keputusan yang mengubah kontrak, arsitektur, ata
 | D-008 | Kontrak data `(sketch, photo)`, `[B, 3, 256, 256]`, float32, rentang `[-1, 1]` | Supaya ketiga modul bisa dikerjakan paralel; rentang `[-1, 1]` cocok dengan output Tanh di Generator | [log 00](logs/adrian/00-perencanaan-arsitektur.md) |
 | D-009 | Kelompok 3 orang: Rian merangkap peran Anggota 1 dan 4 | Panduan mengasumsikan 4 anggota, sedangkan kelompok kami 3 orang | [log 00](logs/adrian/00-perencanaan-arsitektur.md) |
 | D-010 | Log interaksi: 1 file = 1 sesi chat, setiap komponen dan bug menjadi entri tersendiri | Template dosen memakai kolom Tanggal Sesi dan Tautan Sesi Chat, jadi satuan log adalah sesi chat | [logs/TEMPLATE.md](logs/TEMPLATE.md) |
+| D-011 | Inisialisasi bobot N(0, 0.02) untuk Generator dan Discriminator, BatchNorm gamma N(1, 0.02) | Konvensi DCGAN/Pix2Pix; pada input acak, piksel saturasi Tanh turun dari 1,26% ke 0,00% | log 03 |
