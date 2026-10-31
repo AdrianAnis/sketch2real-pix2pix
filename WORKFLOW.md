@@ -35,7 +35,7 @@
 - [x] Generator U-Net utuh dengan skip connection
 - [x] Discriminator PatchGAN 70×70
 - [x] Inisialisasi bobot (normal, std 0.02)
-- [ ] `tests/test_model.py`: tes shape Generator & Discriminator
+- [x] Tes shape model: `tests/test_model.py` (blok), `test_generator.py`, `test_discriminator.py`, `test_init.py`
 
 **`src/train.py` — Meyra**
 
