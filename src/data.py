@@ -3,6 +3,7 @@ from __future__ import annotations
 import random
 import numpy as np
 import torch
+import matplotlib.pyplot as plt
 from pathlib import Path
 from typing import List, Tuple, Union, Optional, Literal, Sequence
 from torch.utils.data import Dataset, DataLoader
@@ -209,3 +210,50 @@ def build_dataloaders(
         drop_last=False,       # semua data val ikut terukur
     )
     return train_loader, val_loader
+
+def show_batch(
+    loader: DataLoader,
+    n_pairs: int = 6,
+    save_path: Optional[str] = None,
+) -> None:
+    """Tampilkan satu batch dari loader sebagai grid 2 baris.
+
+    Baris atas berisi sketsa, baris bawah berisi foto pasangannya
+    (kolom yang sama = pasangan yang sama).
+
+    Args:
+        loader: DataLoader yang menghasilkan (sketch, photo).
+        n_pairs: Jumlah pasangan yang ditampilkan (dibatasi batch size).
+        save_path: Jika diisi, grid juga disimpan ke path ini.
+    """
+    if n_pairs < 1:
+        raise ValueError("n_pairs harus >= 1")
+
+    sketch, photo = next(iter(loader))  # masing-masing [B, 3, 256, 256]
+    assert sketch.ndim == 4 and sketch.shape[1:] == (3, 256, 256), (
+        f"Shape sketsa tidak sesuai kontrak: {tuple(sketch.shape)}"
+    )
+    assert sketch.shape == photo.shape, (
+        f"Shape sketsa {tuple(sketch.shape)} != foto {tuple(photo.shape)}"
+    )
+
+    n = min(n_pairs, sketch.size(0))
+    fig, axes = plt.subplots(2, n, figsize=(2.4 * n, 5.2), squeeze=False)
+
+    for i in range(n):
+        # tensor_to_image: [3, 256, 256] di [-1, 1] -> [256, 256, 3] di [0, 1]
+        axes[0, i].imshow(tensor_to_image(sketch[i]))
+        axes[1, i].imshow(tensor_to_image(photo[i]))
+        axes[0, i].set_title(f"#{i}", fontsize=9)
+
+    for ax in axes.ravel():
+        ax.set_xticks([])
+        ax.set_yticks([])
+    axes[0, 0].set_ylabel("Sketsa")
+    axes[1, 0].set_ylabel("Foto")
+
+    fig.suptitle(f"Satu batch ({n} dari {sketch.size(0)} pasangan)")
+    fig.tight_layout()
+    if save_path is not None:
+        fig.savefig(save_path, dpi=150, bbox_inches="tight")
+    plt.show()
