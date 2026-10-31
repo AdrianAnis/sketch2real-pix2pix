@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import random
+import numpy as np
+import torch
 from pathlib import Path
 from typing import List, Tuple, Union
 
@@ -77,3 +79,23 @@ def load_pair(path: Union[str, Path]) -> Tuple[Image.Image, Image.Image]:
 
     assert sketch.size == photo.size == (IMG_SIZE, IMG_SIZE)
     return sketch, photo
+
+def pil_to_tensor(img: Image.Image) -> torch.Tensor:
+    """PIL RGB -> tensor [3, 256, 256], float32, rentang [-1, 1].
+
+    Pemetaan linear: 0 -> -1.0, 127.5 -> 0.0, 255 -> +1.0.
+    """
+    arr = np.array(img.convert("RGB"), dtype=np.uint8)    # [H, W, 3], 0..255 (salinan)
+    x = torch.from_numpy(arr).permute(2, 0, 1)            # [3, H, W]
+    x = x.to(torch.float32) / 127.5 - 1.0                 # [-1, 1]
+    x = x.contiguous()
+    assert x.shape == (3, IMG_SIZE, IMG_SIZE), f"Shape tak terduga: {tuple(x.shape)}"
+    return x
+
+
+def tensor_to_image(t: torch.Tensor) -> np.ndarray:
+    """Tensor [3, H, W] di [-1, 1] -> array [H, W, 3] float32 di [0, 1] (siap imshow)."""
+    assert t.ndim == 3 and t.shape[0] == 3, f"Butuh [3, H, W], dapat {tuple(t.shape)}"
+    x = (t.detach().cpu().to(torch.float32) + 1.0) / 2.0  # [-1, 1] -> [0, 1]
+    x = x.clamp(0.0, 1.0)
+    return x.permute(1, 2, 0).numpy()                     # [H, W, 3]
