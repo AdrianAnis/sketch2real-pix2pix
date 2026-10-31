@@ -51,3 +51,29 @@ def select_edges2shoes_subset(
     train_paths = sorted(rng.sample(train_all, n_train))  # tanpa pengembalian
 
     return train_paths, val_all
+
+from PIL import Image
+
+IMG_SIZE = 256  # sisi tiap gambar (sketch dan photo), sesuai kontrak
+
+
+def load_pair(path: Union[str, Path]) -> Tuple[Image.Image, Image.Image]:
+    """Baca satu file edges2shoes (512x256) lalu potong jadi (sketch, photo).
+
+    Setengah kiri = sketch (input), setengah kanan = photo (target).
+
+    Returns:
+        (sketch, photo): dua PIL Image RGB, masing-masing 256x256.
+    """
+    with Image.open(path) as im:
+        im = im.convert("RGB")  # paksa 3 channel; hasilnya salinan yang sudah terbaca
+
+    w, h = im.size  # PIL: (lebar, tinggi)
+    assert (w, h) == (2 * IMG_SIZE, IMG_SIZE), f"Ukuran tak terduga {im.size} pada {path}"
+
+    half = w // 2  # 256
+    sketch = im.crop((0, 0, half, h))   # kolom 0..255
+    photo = im.crop((half, 0, w, h))    # kolom 256..511
+
+    assert sketch.size == photo.size == (IMG_SIZE, IMG_SIZE)
+    return sketch, photo
