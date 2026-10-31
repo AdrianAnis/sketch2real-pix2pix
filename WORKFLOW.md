@@ -30,7 +30,7 @@
 
 **`src/model.py` — Rian**
 
-- [ ] Blok downsampling (encoder)
+- [x] Blok downsampling (encoder)
 - [ ] Blok upsampling (decoder) + dropout
 - [ ] Generator U-Net utuh dengan skip connection
 - [ ] Discriminator PatchGAN 70×70
