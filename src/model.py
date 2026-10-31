@@ -41,3 +41,32 @@ class DownBlock(nn.Module):
         assert x.shape[1] == self.in_channels, f"Channel {x.shape[1]} != {self.in_channels}"
         assert x.shape[2] % 2 == 0 and x.shape[3] % 2 == 0, "H dan W harus genap"
         return self.block(x)  # [B, C_out, H/2, W/2]
+
+class UpBlock(nn.Module):
+    """Decoder block U-Net: ConvT(k4,s2,p1) -> BatchNorm -> [Dropout(0.5)] -> ReLU.
+
+    Menggandakan H dan W, mengubah channel in -> out.
+    Concat skip connection TIDAK dilakukan di sini (tanggung jawab Generator).
+    """
+
+    def __init__(self, in_channels: int, out_channels: int, use_dropout: bool = False) -> None:
+        super().__init__()
+        self.in_channels = in_channels
+        layers: list[nn.Module] = [
+            nn.ConvTranspose2d(
+                in_channels, out_channels,
+                kernel_size=4, stride=2, padding=1,
+                bias=False,  # redundan karena diikuti BatchNorm
+            ),
+            nn.BatchNorm2d(out_channels),
+        ]
+        if use_dropout:
+            layers.append(nn.Dropout(0.5))
+        layers.append(nn.ReLU())
+        self.block = nn.Sequential(*layers)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # x: [B, C_in, H, W]
+        assert x.dim() == 4, f"Harus 4D [B,C,H,W], dapat {tuple(x.shape)}"
+        assert x.shape[1] == self.in_channels, f"Channel {x.shape[1]} != {self.in_channels}"
+        return self.block(x)  # [B, C_out, 2H, 2W]
