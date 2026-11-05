@@ -60,7 +60,7 @@
 
 ### Fase 4 — Demo, Laporan, Presentasi
 
-- [ ] `src/infer.py`: demo sketsa → foto — **Rian**
+- [v] `src/infer.py`: demo sketsa → foto — **Rian**
 - [ ] Laporan akhir — **Rian**
 - [ ] Latihan presentasi — **Semua**
 
