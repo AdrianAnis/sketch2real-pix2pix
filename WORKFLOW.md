@@ -5,10 +5,10 @@
 | Fase | Fokus                       | Target Selesai | Status |
 | ---- | --------------------------- | -------------- | ------ |
 | 0    | Perencanaan & struktur repo | 31/10/2026     | ✅     |
-| 1    | Pengerjaan modul (paralel)  | DD/MM          | ⬜     |
-| 2    | Integrasi di Kaggle         | DD/MM          | ⬜     |
-| 3    | Training & tuning           | DD/MM          | ⬜     |
-| 4    | Demo, laporan, presentasi   | DD/MM          | ⬜     |
+| 1    | Pengerjaan modul (paralel)  | 05/11/2026     | ✅     |
+| 2    | Integrasi di Kaggle         | 05/11/2026     | ✅     |
+| 3    | Training & tuning           | 07/11/2026     | ⬜     |
+| 4    | Demo, laporan, presentasi   | 08/11/2026     | ⬜     |
 
 ## Checklist per Fase
 
@@ -49,12 +49,12 @@
 ### Fase 2 — Integrasi
 
 - [v] Ganti tensor dummy di `train.py` dengan DataLoader dari `data.py` — **Meyra**
-- [ ] Jalankan ketiga modul bersama di Kaggle, perbaiki eror yang muncul — **Semua**
+- [v] Jalankan ketiga modul bersama di Kaggle, perbaiki eror yang muncul — **Semua**
 
 ### Fase 3 — Training & Tuning
 
-- [ ] Training penuh — **Meyra**
-- [ ] Simpan grafik loss dan grid sampel ke `results/` — **Meyra**
+- [v] Training penuh — **Meyra**
+- [v] Simpan grafik loss dan grid sampel ke `results/` — **Meyra**
 - [ ] Eksperimen tuning (lr / batch size), catat hasilnya dan pilihan akhirnya di `DECISIONS.md` — **Meyra**
 - [ ] Hitung PSNR/SSIM di data validasi — **Meyra**
 
