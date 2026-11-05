@@ -43,8 +43,8 @@ def test_sample_saver_creates_file_and_restores_mode(tmp_path):
 
     out = tmp_path / "samples" / "epoch_001.png"
     assert out.exists() and out.stat().st_size > 0
-    assert G.seen[-1] == (False, False), "sampel harus dibuat dengan eval() + no_grad()"
-    assert G.training, "G harus kembali ke mode train"
+    assert G.seen[-1] == (True, False), "sampel harus dibuat dengan mode train() + no_grad()"
+    assert G.training, "G harus kembali ke mode semula (train)"
 
 
 def test_hook_called_each_epoch_and_samples_use_fixed_batch(tmp_path):
@@ -78,4 +78,14 @@ def test_save_curves_creates_file(tmp_path):
     pytest.importorskip("matplotlib")
     history = {"loss_D": [0.7, 0.6], "loss_G": [30.0, 25.0], "val_l1": [0.3, 0.25]}
     save_curves(history, tmp_path / "results" / "loss_curves.png")
-    assert (tmp_path / "results" / "loss_curves.png").exists()
+    assert (tmp_path / "results" / "loss_curves.png").exists()\
+
+
+def test_sample_saver_restores_eval_mode(tmp_path):
+    G = TinyG()
+    sketch, photo = _batch()
+    saver = make_sample_saver(sketch, photo, tmp_path / "samples", device="cpu")
+    G.eval()
+    saver(1, G, TinyD(), {})
+    assert not G.training, "mode semula (eval) harus dipulihkan"
+    assert G.seen[-1] == (True, False)

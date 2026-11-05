@@ -130,17 +130,25 @@ def evaluate_l1(
     device: torch.device,
     l1: nn.Module,
 ) -> float:
-    """Rata-rata L1 antara G(sketch) dan photo di loader (dibobot ukuran batch)."""
-    G.eval()
-    total, count = 0.0, 0
-    for sketch, photo in loader:
-        sketch, photo = sketch.to(device), photo.to(device)
-        fake = G(sketch)  # [B, 3, 256, 256]
-        assert fake.shape == photo.shape
-        bs = sketch.size(0)
-        total += l1(fake, photo).item() * bs
-        count += bs
+    """Rata-rata L1 antara G(sketch) dan photo di loader (dibobot ukuran batch).
+
+    G sengaja dijalankan dalam mode train() (BatchNorm memakai statistik batch,
+    Dropout aktif), sama seperti saat training dan pengujian di paper Pix2Pix.
+    Tidak ada gradien (no_grad). Mode semula G dipulihkan di akhir.
+    """
+    was_training = G.training
     G.train()
+    total, count = 0.0, 0
+    try:
+        for sketch, photo in loader:
+            sketch, photo = sketch.to(device), photo.to(device)
+            fake = G(sketch)  # [B, 3, 256, 256]
+            assert fake.shape == photo.shape
+            bs = sketch.size(0)
+            total += l1(fake, photo).item() * bs
+            count += bs
+    finally:
+        G.train(was_training)
     assert count > 0, "val_loader kosong"
     return total / count
 
@@ -243,7 +251,7 @@ def make_sample_saver(
 
     def save_samples(epoch: int, G: nn.Module, D: nn.Module, history: History) -> None:
         was_training = G.training
-        G.eval()
+        G.train()
         try:
             with torch.no_grad():
                 fake = G(sketch.to(device)).cpu()  # [N, 3, H, W]

@@ -4,7 +4,7 @@ import torch
 from torch import nn
 from torch.optim import Adam
 
-from src.train import train, load_checkpoint
+from src.train import train, load_checkpoint, evaluate_l1
 
 
 class TinyG(nn.Module):
@@ -95,5 +95,14 @@ def test_validation_uses_eval_no_grad_then_back_to_train(tmp_path):
     train(G, D, _loader(), _loader(), num_epochs=1, ckpt_dir=tmp_path, device="cpu")
 
     assert (True, True) in G.seen, "training harus memakai mode train dengan grad"
-    assert G.seen[-1] == (False, False), "validasi harus eval() + no_grad()"
+    assert G.seen[-1] == (True, False), "validasi harus mode train() + no_grad()"
+    assert all(training for training, _ in G.seen), "G tidak boleh pernah dijalankan dalam eval()"
     assert G.training and D.training, "G dan D harus kembali ke mode train"
+    
+    
+def test_evaluate_l1_restores_original_mode():
+    G = TinyG()
+    G.eval()
+    evaluate_l1(G, _loader(), torch.device("cpu"), nn.L1Loss())
+    assert not G.training, "mode semula (eval) harus dipulihkan"
+    assert G.seen[-1] == (True, False)
