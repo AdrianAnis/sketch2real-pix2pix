@@ -40,11 +40,11 @@
 **`src/train.py` — Meyra**
 
 - [ ] Setup notebook Kaggle (GPU aktif)
-- [ ] Satu langkah training dengan tensor dummy
-- [ ] Loss: BCEWithLogits + 100 × L1
-- [ ] Update Discriminator lalu Generator secara bergantian
-- [ ] Loop epoch + simpan checkpoint
-- [ ] `tests/test_train.py`: satu langkah training dengan tensor dummy, loss bernilai finite dan bobot model berubah
+- [v] Satu langkah training dengan tensor dummy
+- [v] Loss: BCEWithLogits + 100 × L1
+- [v] Update Discriminator lalu Generator secara bergantian
+- [v] Loop epoch + simpan checkpoint
+- [v] `tests/test_train.py`: satu langkah training dengan tensor dummy, loss bernilai finite dan bobot model berubah
 
 ### Fase 2 — Integrasi
 
