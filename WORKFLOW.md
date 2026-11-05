@@ -39,7 +39,7 @@
 
 **`src/train.py` — Meyra**
 
-- [ ] Setup notebook Kaggle (GPU aktif)
+- [v] Setup notebook Kaggle (GPU aktif)
 - [v] Satu langkah training dengan tensor dummy
 - [v] Loss: BCEWithLogits + 100 × L1
 - [v] Update Discriminator lalu Generator secara bergantian
@@ -48,7 +48,7 @@
 
 ### Fase 2 — Integrasi
 
-- [ ] Ganti tensor dummy di `train.py` dengan DataLoader dari `data.py` — **Meyra**
+- [v] Ganti tensor dummy di `train.py` dengan DataLoader dari `data.py` — **Meyra**
 - [ ] Jalankan ketiga modul bersama di Kaggle, perbaiki eror yang muncul — **Semua**
 
 ### Fase 3 — Training & Tuning
