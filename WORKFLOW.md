@@ -7,7 +7,7 @@
 | 0    | Perencanaan & struktur repo | 31/10/2026     | ✅     |
 | 1    | Pengerjaan modul (paralel)  | 05/11/2026     | ✅     |
 | 2    | Integrasi di Kaggle         | 05/11/2026     | ✅     |
-| 3    | Training & tuning           | 07/11/2026     | ⬜     |
+| 3    | Training & tuning           | 07/11/2026     | ✅     |
 | 4    | Demo, laporan, presentasi   | 08/11/2026     | ⬜     |
 
 ## Checklist per Fase
@@ -55,7 +55,7 @@
 
 - [v] Training penuh — **Meyra**
 - [v] Simpan grafik loss dan grid sampel ke `results/` — **Meyra**
-- [ ] Eksperimen tuning (lr / batch size), catat hasilnya dan pilihan akhirnya di `DECISIONS.md` — **Meyra**
+- [v] Eksperimen tuning (lr / batch size), catat hasilnya dan pilihan akhirnya di `DECISIONS.md` — **Meyra**
 - [v] Hitung PSNR/SSIM di data validasi — **Naura**
 
 ### Fase 4 — Demo, Laporan, Presentasi
