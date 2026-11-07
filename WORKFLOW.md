@@ -56,7 +56,7 @@
 - [v] Training penuh — **Meyra**
 - [v] Simpan grafik loss dan grid sampel ke `results/` — **Meyra**
 - [ ] Eksperimen tuning (lr / batch size), catat hasilnya dan pilihan akhirnya di `DECISIONS.md` — **Meyra**
-- [ ] Hitung PSNR/SSIM di data validasi — **Meyra**
+- [v] Hitung PSNR/SSIM di data validasi — **Naura**
 
 ### Fase 4 — Demo, Laporan, Presentasi
 
