@@ -1,4 +1,4 @@
-# LOG INTERAKSI LLM — KELOMPOK 4
+# LOG INTERAKSI LLM — KELOMPOK 6
 
 - **Tanggal Sesi:** 01/11/2026
 - **Anggota:** Naura

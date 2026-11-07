@@ -1,4 +1,4 @@
-# LOG INTERAKSI LLM — KELOMPOK 4
+# LOG INTERAKSI LLM — KELOMPOK 6
 
 > **Aturan:**
 > - 1 file = 1 sesi chat. Setiap komponen dan setiap bug dalam chat itu dicatat sebagai entri tersendiri (1a, 1b, 2a, ...).
