@@ -20,7 +20,7 @@ Kelompok terdiri dari 3 orang, sehingga Rian merangkap peran Anggota 1 dan 4 (li
 | Training | 12 epoch, batch 16, lr 2e-4, GPU Kaggle T4 (±6 menit per epoch) |
 | `val_L1` (mode `train()`, epoch 12) | 0,1619 |
 | PSNR / SSIM (200 gambar val) | **16,98 ± 3,92 dB** / **0,7128 ± 0,0946** |
-| Tuning batch size 8 vs 16 | Tidak ada bukti batch 8 lebih baik (D-018) |
+| Tuning batch size 8 vs 16 (PSNR / SSIM, batch validasi sama) | Batch 16 sedikit lebih baik: 16,98 vs 16,39 dB dan 0,7128 vs 0,6983; satu run per konfigurasi (D-018) |
 
 Grafik loss dan sampel gambar ada di `results/` (`loss_curves.png`, `samples/epoch_004.png`, `epoch_008.png`, `epoch_012.png`); angka metrik di `results/metrics.json`. Alasan setiap keputusan desain ada di `DECISIONS.md`.
 

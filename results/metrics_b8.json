@@ -1,0 +1,12 @@
+{
+  "ckpt": "G_only_b8.pt",
+  "val_dir": "data/edges2shoes/val",
+  "batch_size": 16,
+  "seed": 42,
+  "device": "cpu",
+  "psnr_mean": 16.385104920014665,
+  "psnr_std": 3.8075862162756753,
+  "ssim_mean": 0.6982908003418834,
+  "ssim_std": 0.09206024189927486,
+  "n": 200
+}
