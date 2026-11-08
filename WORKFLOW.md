@@ -8,7 +8,7 @@
 | 1    | Pengerjaan modul (paralel)  | 05/11/2026     | ✅     |
 | 2    | Integrasi di Kaggle         | 05/11/2026     | ✅     |
 | 3    | Training & tuning           | 07/11/2026     | ✅     |
-| 4    | Demo, laporan, presentasi   | 08/11/2026     | ⬜     |
+| 4    | Demo, laporan, presentasi   | 09/11/2026     | 🟡     |
 
 ## Checklist per Fase
 
@@ -39,28 +39,28 @@
 
 **`src/train.py` — Meyra**
 
-- [v] Setup notebook Kaggle (GPU aktif)
-- [v] Satu langkah training dengan tensor dummy
-- [v] Loss: BCEWithLogits + 100 × L1
-- [v] Update Discriminator lalu Generator secara bergantian
-- [v] Loop epoch + simpan checkpoint
-- [v] `tests/test_train.py`: satu langkah training dengan tensor dummy, loss bernilai finite dan bobot model berubah
+- [x] Setup notebook Kaggle (GPU aktif)
+- [x] Satu langkah training dengan tensor dummy
+- [x] Loss: BCEWithLogits + 100 × L1
+- [x] Update Discriminator lalu Generator secara bergantian
+- [x] Loop epoch + simpan checkpoint
+- [x] `tests/test_train.py`: satu langkah training dengan tensor dummy, loss bernilai finite dan bobot model berubah
 
 ### Fase 2 — Integrasi
 
-- [v] Ganti tensor dummy di `train.py` dengan DataLoader dari `data.py` — **Meyra**
-- [v] Jalankan ketiga modul bersama di Kaggle, perbaiki eror yang muncul — **Semua**
+- [x] Ganti tensor dummy di `train.py` dengan DataLoader dari `data.py` — **Meyra**
+- [x] Jalankan ketiga modul bersama di Kaggle, perbaiki eror yang muncul — **Semua**
 
 ### Fase 3 — Training & Tuning
 
-- [v] Training penuh — **Meyra**
-- [v] Simpan grafik loss dan grid sampel ke `results/` — **Meyra**
-- [v] Eksperimen tuning (lr / batch size), catat hasilnya dan pilihan akhirnya di `DECISIONS.md` — **Meyra**
-- [v] Hitung PSNR/SSIM di data validasi — **Naura**
+- [x] Training penuh — **Meyra**
+- [x] Simpan grafik loss dan grid sampel ke `results/` — **Meyra**
+- [x] Eksperimen tuning (lr / batch size), catat hasilnya dan pilihan akhirnya di `DECISIONS.md` — **Meyra**
+- [x] Hitung PSNR/SSIM di data validasi — **Naura**
 
 ### Fase 4 — Demo, Laporan, Presentasi
 
-- [v] `src/infer.py`: demo sketsa → foto — **Rian**
+- [x] `src/infer.py`: demo sketsa → foto — **Rian**
 - [ ] Laporan akhir — **Rian**
 - [ ] Latihan presentasi — **Semua**
 

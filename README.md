@@ -1,65 +1,119 @@
 # sketch2real-pix2pix
 
-Proyek 1 — Vibe Coding Generative AI from Scratch (CAK4KBB3)
-Model **Pix2Pix (Conditional GAN)** untuk mengubah sketsa (edges) menjadi gambar realistis.
+Proyek 1 — Vibe Coding Generative AI from Scratch (CAK4KBB3) — **Kelompok 6**
+Model **Pix2Pix (Conditional GAN)** untuk mengubah sketsa (edges) menjadi foto sepatu realistis (dataset edges2shoes, 256×256).
 
 ## Anggota & Pembagian Tugas
 
 | Nama | Peran | File |
 |---|---|---|
-| Rian (Adrian Anis Pratama) | Ketua — Prompt Engineer & LLM Navigator, Lead Documentarian & Error Handler | `src/model.py`, `logs/` |
-| Naura | Data Pipeline & Preprocessing Engineer | `src/data.py` |
+| Rian (Adrian Anis Pratama) | Ketua — Prompt Engineer & LLM Navigator, Lead Documentarian & Error Handler | `src/model.py`, `src/infer.py`, `logs/`, `DECISIONS.md`, `WORKFLOW.md` |
+| Naura | Data Pipeline & Preprocessing Engineer | `src/data.py`, `src/metrics.py` |
 | Meyra | Training Loop & Hyperparameter Tuning Engineer | `src/train.py` |
+
+Kelompok terdiri dari 3 orang, sehingga Rian merangkap peran Anggota 1 dan 4 (lihat D-009 di `DECISIONS.md`).
+
+## Hasil Ringkas
+
+| Hal | Hasil |
+|---|---|
+| Training | 12 epoch, batch 16, lr 2e-4, GPU Kaggle T4 (±6 menit per epoch) |
+| `val_L1` (mode `train()`, epoch 12) | 0,1619 |
+| PSNR / SSIM (200 gambar val) | **16,98 ± 3,92 dB** / **0,7128 ± 0,0946** |
+| Tuning batch size 8 vs 16 | Tidak ada bukti batch 8 lebih baik (D-018) |
+
+Grafik loss dan sampel gambar ada di `results/` (`loss_curves.png`, `samples/epoch_004.png`, `epoch_008.png`, `epoch_012.png`); angka metrik di `results/metrics.json`. Alasan setiap keputusan desain ada di `DECISIONS.md`.
+
+Catatan: pada epoch 1-3 `val_L1` dihitung dengan kode lama (mode `eval()`), sehingga nilainya tidak sebanding dengan epoch 4-12 (lihat D-017).
 
 ## Kontrak Antar Modul
 
 Semua anggota wajib mengikuti kontrak ini supaya modul bisa langsung digabung.
 
-- **Dataset:** edges2shoes (subset ±10.000 pasangan), resolusi 256×256
-- **Output `src/data.py`:** DataLoader yang menghasilkan pasangan `(sketch, photo)`
-  - shape `[B, 3, 256, 256]`, dtype `float32`, rentang nilai `[-1, 1]`
-- **Output `src/model.py`:** class `Generator()` (U-Net) dan `Discriminator()` (PatchGAN 70×70)
+- **Dataset:** edges2shoes (subset 10.000 pasangan train, 200 val), resolusi 256×256
+- **`src/data.py`:** `build_dataloaders(data_root, batch_size, num_workers=2) -> (train_loader, val_loader)`
+  - setiap batch `(sketch, photo)`, shape `[B, 3, 256, 256]`, dtype `float32`, rentang `[-1, 1]`
+  - `data_root` berisi subfolder `train/` dan `val/` (tiap file 512×256: sketsa kiri, foto kanan)
+- **`src/model.py`:** `Generator(in_channels=3, out_channels=3, base=64)` (U-Net), `Discriminator(in_channels=6, base_ch=64)` (PatchGAN 70×70), dan `init_weights(m)`
   - `Generator(sketch) -> fake_photo`, shape sama dengan input
-  - `Discriminator(sketch, photo) -> patch_logits`, input digabung di dimensi channel (6 channel)
-- **`src/train.py`:** import dari `src.data` dan `src.model`, loss `BCE + 100 × L1`, Adam (lr 2e-4, β1 0.5)
+  - `Discriminator(sketch, photo) -> patch_logits` `[B, 1, 30, 30]`, input digabung di dimensi channel (6 channel), tanpa Sigmoid
+- **`src/train.py`:** loss `BCEWithLogits + 100 × L1` (loss D dikali 0,5), Adam (lr 2e-4, β 0,5/0,999); validasi dan sampel dalam mode `train()` (D-017)
+- **`src/infer.py`:** demo sketsa → foto; **`src/metrics.py`:** evaluasi PSNR dan SSIM
 
 ## Struktur Repo
 
 ```
 sketch2real-pix2pix/
+├── assets/
+│   └── context_sketches/  # 7 sketsa pendamping untuk inferensi (D-019)
 ├── logs/
-│   ├── adrian/          # Log sesi LLM Rian
-│   ├── meyra/           # Log sesi LLM Meyra
-│   ├── naura/           # Log sesi LLM Naura
-│   ├── README.md        # Indeks semua sesi (urut tanggal)
-│   ├── SYSTEM_PROMPT.md # System prompt tim untuk setiap sesi LLM
-│   └── TEMPLATE.md      # Template log per sesi
-├── notebooks/           # Notebook Kaggle untuk menjalankan training
-├── results/             # Grafik loss, sampel gambar, metrik
+│   ├── adrian/            # Log sesi LLM Rian
+│   ├── meyra/             # Log sesi LLM Meyra
+│   ├── naura/             # Log sesi LLM Naura
+│   ├── README.md          # Indeks semua sesi (urut tanggal)
+│   ├── SYSTEM_PROMPT.md   # System prompt tim untuk setiap sesi LLM
+│   └── TEMPLATE.md        # Template log per sesi
+├── notebooks/             # Notebook Kaggle untuk menjalankan training
+├── results/               # Grafik loss, sampel gambar, metrik (metrics.json)
 ├── src/
 │   ├── __init__.py
-│   ├── data.py          # Dataset & DataLoader
-│   ├── model.py         # Generator & Discriminator
-│   └── train.py         # Training loop, loss, metrik, checkpoint
-├── tests/               # Tes per modul (test_data.py, test_model.py, test_train.py)
+│   ├── data.py            # Dataset & DataLoader
+│   ├── model.py           # Generator & Discriminator
+│   ├── train.py           # Training loop, loss, checkpoint, sampel per epoch
+│   ├── infer.py           # Demo sketsa -> foto (CLI)
+│   └── metrics.py         # Evaluasi PSNR dan SSIM (CLI)
+├── tests/                 # Tes per modul (data, model, train, infer, metrics)
 ├── .gitignore
-├── DECISIONS.md         # Catatan keputusan desain & alasannya
+├── DECISIONS.md           # Catatan keputusan desain & alasannya
 ├── README.md
 ├── requirements.txt
-└── WORKFLOW.md          # Timeline, checklist per fase, siklus kerja
+└── WORKFLOW.md            # Timeline, checklist per fase, siklus kerja
 ```
 
-## Menjalankan di Kaggle
+File besar tidak disimpan di repo (`.gitignore`): `checkpoints/`, `*.pt`, `*.zip`, dan `data/`.
 
-Aktifkan GPU di Kaggle Notebook, lalu:
+## Instalasi & Tes
+
+```bash
+git clone https://github.com/AdrianAnis/sketch2real-pix2pix.git
+cd sketch2real-pix2pix
+python -m pip install -r requirements.txt
+python -m pytest tests -q
+```
+
+## Training di Kaggle
+
+Aktifkan **GPU** dan **Internet** di Kaggle Notebook, tambahkan dataset `balraj98/edges2shoes-dataset` sebagai Input, lalu:
 
 ```python
-!git clone https://github.com/<username>/sketch2real-pix2pix.git
+!git clone https://github.com/AdrianAnis/sketch2real-pix2pix.git
 %cd sketch2real-pix2pix
 !pip install -q -r requirements.txt
-!python -m pytest tests/
-!python -m src.train
+!python -m pytest tests -q
+!python -m src.train --data_root /kaggle/input/datasets/balraj98/edges2shoes-dataset --epochs 12
 ```
+
+Opsi lain: `--batch_size` (default 16), `--seed` (default 42), `--ckpt_dir`, `--results_dir`, `--resume checkpoints/latest.pt` (melanjutkan; `--epochs` adalah target total), `--keep_all`. Keluaran training: `checkpoints/latest.pt`, `results/loss_curves.png`, dan `results/samples/epoch_XXX.png`. File di `/kaggle/working/` hilang saat sesi ditutup, jadi unduh hasilnya sebelum itu.
+
+## Demo: sketsa → foto
+
+Butuh bobot Generator (`G_only.pt` atau `checkpoints/latest.pt`) yang tidak disimpan di repo (minta ke tim).
+
+```bash
+python -m src.infer --ckpt G_only.pt --input sketsa.png --output hasil.png --seed 0
+```
+
+Keluarannya gambar berdampingan (sketsa | hasil). Sketsa sebaiknya garis hitam di latar putih (latar gelap dideteksi otomatis, atau paksa dengan `--invert`). Secara bawaan sketsa dijalankan bersama 7 sketsa pendamping dari `assets/context_sketches/` (D-019); `--no_context` menjalankan sketsa sendirian (warna bisa lebih jenuh dan bernoda). Untuk membandingkan dengan foto asli: `--val_dir <folder val> --val_index N`.
+
+## Evaluasi: PSNR dan SSIM
+
+Butuh 200 gambar validasi edges2shoes di `data/edges2shoes/val/` (ambil dari dataset Kaggle) dan bobot Generator:
+
+```bash
+python -m src.metrics --ckpt G_only.pt --val_dir data/edges2shoes/val --batch_size 16 --seed 42 --device cpu
+```
+
+Hasil disimpan ke `results/metrics.json`. Generator dijalankan dalam mode `train()` (D-017) dengan batch 16, sehingga hasilnya sedikit bergantung pada ukuran batch dan seed.
 
 ## Aturan Kerja
 
