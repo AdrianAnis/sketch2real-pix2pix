@@ -18,3 +18,4 @@ Kolom **Commit** berisi hash commit pertama yang menambahkan file log tersebut (
 | 10 | 06/11/2026 | Rian | `infer.py`: demo sketsa ke foto | Inisiasi | [adrian/04-infer.md](adrian/04-infer.md) | `631bf16` |
 | 11 | 07/11/2026 | Naura | `metrics.py`: evaluasi PSNR dan SSIM | Inisiasi, Debugging | [naura/04-metrik-psnr-ssim.md](naura/04-metrik-psnr-ssim.md) | `3d987e2` |
 | 12 | 07/11/2026 | Meyra | Tuning batch size 8 vs 16, pengamanan bobot | Inisiasi, Debugging | [meyra/04-tuning-batchsize.md](meyra/04-tuning-batchsize.md) | `c8cedd8` |
+| 13 | 10/11/2026 | Meyra | Lanjut training 12 ke 24 epoch (`--resume`), pembacaan riwayat val_L1 | Inisiasi | [meyra/05-lanjut-training-24-epoch.md](meyra/05-lanjut-training-24-epoch.md) | belum di-commit |

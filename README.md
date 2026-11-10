@@ -21,8 +21,9 @@ Kelompok terdiri dari 3 orang, sehingga Rian merangkap peran Anggota 1 dan 4 (li
 | `val_L1` (mode `train()`, epoch 12) | 0,1619 |
 | PSNR / SSIM (200 gambar val) | **16,98 ± 3,92 dB** / **0,7128 ± 0,0946** |
 | Tuning batch size 8 vs 16 (PSNR / SSIM, batch validasi sama) | Batch 16 sedikit lebih baik: 16,98 vs 16,39 dB dan 0,7128 vs 0,6983; satu run per konfigurasi (D-018) |
+| Perpanjangan training 12 ke 24 epoch (PSNR / SSIM) | Tidak ada perbaikan berarti: 16,87 vs 16,98 dB dan 0,7163 vs 0,7128; hasil utama tetap 12 epoch (D-021) |
 
-Grafik loss dan sampel gambar ada di `results/` (`loss_curves.png`, `samples/epoch_004.png`, `epoch_008.png`, `epoch_012.png`); angka metrik di `results/metrics.json`. Alasan setiap keputusan desain ada di `DECISIONS.md`.
+Grafik loss dan sampel gambar ada di `results/` (`loss_curves.png`, `samples/epoch_004.png`, `epoch_008.png`, `epoch_012.png`); angka metrik di `results/metrics.json`; hasil eksperimen 24 epoch ada di `results/e24/` dan `results/metrics_e24.json`. Alasan setiap keputusan desain ada di `DECISIONS.md`.
 
 Catatan: pada epoch 1-3 `val_L1` dihitung dengan kode lama (mode `eval()`), sehingga nilainya tidak sebanding dengan epoch 4-12 (lihat D-017).
 
